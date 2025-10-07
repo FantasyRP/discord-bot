@@ -1,0 +1,24 @@
+{
+  "name": "discord-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NieuwlandRP/discord-bot.git"
+  },
+  "author": "Arootsy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NieuwlandRP/discord-bot/issues"
+  },
+  "homepage": "https://github.com/NieuwlandRP/discord-bot#readme",
+  "description": "",
+  "dependencies": {
+    "chalk": "^5.6.2",
+    "discord.js": "^14.22.1",
+    "dotenv": "^17.2.3"
+  }
+}
