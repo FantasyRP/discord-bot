@@ -62,7 +62,7 @@ A modular Discord bot built with Discord.js v14 for the Fantasy Roleplay communi
 
 5. **Start the bot**
     ```bash
-    npm test
+    node . OR node index.js
     ```
 
 ## 📁 Project Structure
