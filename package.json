@@ -8,14 +8,14 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/NieuwlandRP/discord-bot.git"
+		"url": "git+https://github.com/FantasyRP/discord-bot.git"
 	},
 	"author": "Arootsy",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/NieuwlandRP/discord-bot/issues"
+		"url": "https://github.com/FantasyRP/discord-bot/issues"
 	},
-	"homepage": "https://github.com/NieuwlandRP/discord-bot#readme",
+	"homepage": "https://github.com/FantasyRP/discord-bot#readme",
 	"description": "",
 	"dependencies": {
 		"chalk": "^5.6.2",
