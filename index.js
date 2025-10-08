@@ -1,24 +1,36 @@
-import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
+import { Client, Events, GatewayIntentBits, Partials } from "discord.js";
 import { readdirSync } from "node:fs";
-import print from "./modules/print/index.js";
-import config from './config.js';
+import Config from "./config.js";
 
-const client = new Client({ 			
-    intents: Object.values(GatewayIntentBits),
-    partials: Object.values(Partials),
-    shards: "auto", 
-});
+class DiscordBot {
+	constructor() {
+		this.client = new Client({
+			intents: Object.values(GatewayIntentBits),
+			partials: Object.values(Partials),
+			shards: "auto",
+		});
+	}
 
-client.on(Events.ClientReady, (client) => {
-    print.success(`${client.user.username} is online`)
+	async initialize() {
+		await this.loadHandlers();
+		await this.login();
+	}
 
-    client.guilds.cache.get(config.guildId).commands.set(client.slashDatas);
-})
+	async loadHandlers() {
+		const handlerFiles = readdirSync("./handlers");
 
-readdirSync("./handlers").forEach(async (file) => {
-    const handlerFile = await import(`./handlers/${file}`);
-    const handler = handlerFile.default;
-    handler.execute(client);
-});
+		for (const file of handlerFiles) {
+			const handlerModule = await import(`./handlers/${file}`);
+			const handler = handlerModule.default;
+			await handler.execute(this.client);
+		}
+	}
 
-client.login(config.token)
+	async login() {
+		await this.client.login(Config.token);
+	}
+}
+
+// Initialize the bot
+const bot = new DiscordBot();
+bot.initialize();

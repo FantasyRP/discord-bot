@@ -1,76 +1,62 @@
 import { ChannelType, Collection, Events } from "discord.js";
-import config from "../config.js";
-const cooldown = new Collection();
+import Config from "../config.js";
 
-export default {
-	name: Events.MessageCreate,
-	async execute(message) {
-		const { client } = message;
+class MessageHandler {
+	static name = Events.MessageCreate;
 
-		if (message.author.bot) {
-			return;
+	static restrictedThreads = new Collection();
+
+	/**
+	 * @param {import('discord.js').Message} message
+	 */
+	static async execute(message) {
+		if (message.author.bot) return;
+
+		if (message.channel.type === ChannelType.PrivateThread) {
+			await this.handleThreadMessage(message);
 		}
+	}
 
-		if (message.channel.type === ChannelType.DM) {
-			return;
-		}
-
-		const { prefix } = config;
-		if (!message.content.startsWith(prefix)) {
-			return;
-		}
-
-		const args = message.content.slice(prefix.length).trim().split(/ +/g);
-		const cmd = args.shift().toLowerCase();
-
-		if (cmd.length === 0) {
-			return;
-		}
-
-		let command = client.commands.get(cmd);
-		command ||= client.commands.get(client.commandAliases.get(cmd));
-
-		if (command) {
-			if (command.ownerOnly && !config.owners.includes(message.author.id)) {
-				return message.reply({
-					content: "Only my **developers** can use this command.",
-				});
-			}
-
-			if (command.cooldown) {
-				if (cooldown.has(`${command.name}-${message.author.id}`)) {
-					const nowDate = message.createdTimestamp;
-					const waitedDate =
-						cooldown.get(`${command.name}-${message.author.id}`) - nowDate;
-					return message
-						.reply({
-							content: `Cooldown is currently active, please try again <t:${Math.floor(
-								new Date(nowDate + waitedDate).getTime() / 1000,
-							)}:R>.`,
-						})
-						.then((msg) =>
-							setTimeout(
-								() => msg.delete(),
-								cooldown.get(`${command.name}-${message.author.id}`) -
-									Date.now() +
-									1000,
-							),
-						);
+	/**
+	 * @param {import('discord.js').Message} message
+	 */
+	static async handleThreadMessage(message) {
+		const threadId = message.channel.id;
+		
+		if (this.restrictedThreads.has(threadId)) {
+			const isOwner = Config.owners.includes(message.author.id);
+			
+			if (!isOwner) {
+				try {
+					await message.delete();
+				} catch (error) {
+					console.error("Error deleting message from restricted thread:", error);
 				}
-
-				command.prefixRun(message, args);
-
-				cooldown.set(
-					`${command.name}-${message.author.id}`,
-					Date.now() + command.cooldown,
-				);
-
-				setTimeout(() => {
-					cooldown.delete(`${command.name}-${message.author.id}`);
-				}, command.cooldown);
-			} else {
-				command.prefixRun(message, args);
 			}
 		}
-	},
-};
+	}
+
+	/**
+	 * @param {string} threadId
+	 */
+	static restrictThread(threadId) {
+		this.restrictedThreads.set(threadId, true);
+	}
+
+	/**
+	 * @param {string} threadId
+	 */
+	static unrestrictThread(threadId) {
+		this.restrictedThreads.delete(threadId);
+	}
+
+	/**
+	 * @param {string} threadId
+	 * @returns {boolean}
+	 */
+	static isThreadRestricted(threadId) {
+		return this.restrictedThreads.has(threadId);
+	}
+}
+
+export default MessageHandler;

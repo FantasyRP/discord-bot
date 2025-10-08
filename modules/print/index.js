@@ -1,17 +1,17 @@
-import chalk from 'chalk';
+import chalk from "chalk";
 
-let print = [];
+class Logger {
+	static info(message) {
+		console.log(`${chalk.blue("[INFO]")} ${message}`);
+	}
 
-print.info = function(message) {
-    console.log(`${chalk.blue('[INFO]')} ${message}`);
-};
+	static error(message) {
+		console.log(`${chalk.red("[ERROR]")} ${message}`);
+	}
 
-print.error = function(message) {
-    console.log(`${chalk.red('[ERROR]')} ${message}`);
-};
+	static success(message) {
+		console.log(`${chalk.green("[SUCCESS]")} ${message}`);
+	}
+}
 
-print.success = function(message) {
-    console.log(`${chalk.green('[SUCCESS]')} ${message}`);
-};
-
-export default print;
+export default Logger;
