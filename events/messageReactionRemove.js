@@ -1,11 +1,18 @@
 import { Events } from "discord.js";
 import Config from "../config.js";
+import ReactionRolesRemoveHandler from "./reactionRolesRemoveHandler.js";
 
 class MessageReactionRemoveEvent {
 	static name = Events.MessageReactionRemove;
 
 	static async execute(reaction, user) {
 		if (user.bot) return;
+
+		// Handle reaction roles first
+		if (reaction.message.channelId === Config.channels.reactionRoles) {
+			await ReactionRolesRemoveHandler.execute(reaction, user);
+			return;
+		}
 
 		if (["👍", "👎"].includes(reaction.emoji.name)) {
 			await this.handleVotingReactionRemoval(reaction, user);

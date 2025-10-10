@@ -18,7 +18,9 @@ class SetupSubmitCommand {
 
 	static slashData = new SlashCommandBuilder()
 		.setName("setup-submit")
-		.setDescription("Stuurt de submit embed opnieuw")
+		.setDescription(
+			"Stuurt de submit embed handmatig (gebeurt normaal automatisch)"
+		)
 		.setDefaultMemberPermissions(PermissionFlagsBits.Administrator);
 
 	static async slashRun(interaction) {

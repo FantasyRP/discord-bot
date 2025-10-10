@@ -1,12 +1,19 @@
 import { Events } from "discord.js";
 import Config from "../config.js";
 import { VotingManager } from "../modules/voting/index.js";
+import ReactionRolesHandler from "./reactionRolesHandler.js";
 
 class MessageReactionAddEvent {
 	static name = Events.MessageReactionAdd;
 
 	static async execute(reaction, user) {
 		if (user.bot) return;
+
+		// Handle reaction roles first
+		if (reaction.message.channelId === Config.channels.reactionRoles) {
+			await ReactionRolesHandler.execute(reaction, user);
+			return;
+		}
 
 		if (["👍", "👎"].includes(reaction.emoji.name)) {
 			await this.handleVotingReaction(reaction, user);
